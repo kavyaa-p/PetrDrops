@@ -2,7 +2,7 @@
 
 Submitted by: **Kavya Pabbaraju**
 
-This web app: **insert description**
+This web app: **is designed for UCI students to share and track campus sticker drops featuring the school’s mascot, Petr. Users can sign up or log in to post about their drops, including a title, optional description, and images. Posts are displayed in a feed where others can like, comment, and engage in real-time. Each post has its own details page, where users can view comments, add their own, and update or delete posts they’ve made. Whether you're posting about an upcoming drop or keeping track of ongoing ones, PetrDrops makes it easy for students to stay connected with the sticker drop community.**
 
 Time spent: **20** hours spent in total
 
@@ -36,6 +36,7 @@ The following **optional** features are implemented:
 The following **additional** features are implemented:
 
 * [x] Posts, comments, edits, and deletes show in real time
+* [x] Login and logout functionality implemented
 
 ## Video Walkthrough
 
