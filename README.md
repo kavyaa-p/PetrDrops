@@ -41,7 +41,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='./PetrDropsDemo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with [Kap](https://getkap.co/) for macOS
@@ -52,7 +52,7 @@ GIF created with [Kap](https://getkap.co/) for macOS
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+I had a lot of difficulties in all aspects of this project, particularly in getting edit to work as intended, redirecting pages on logout or delete, and implementing sign up. I did not show sign up in the demo GIF as my code for it broke and I could not fix it. I wanted to implement other extra functionality like using Google API to add a map to the website for users to be able to view locations tagged on a post on Google Maps, however, due to several difficulties I decided to not add them and keep the website minimal.
 
 ## License
 
