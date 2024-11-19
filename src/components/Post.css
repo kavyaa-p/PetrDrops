@@ -1,0 +1,98 @@
+.post-container {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.5rem; /* Adds space between picture and username */
+}
+
+.username-time-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns text to the left */
+}
+
+.username {
+    font-weight: bold;
+    margin: 0; /* Removes default margins */
+}
+
+.post-time {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0; /* Removes default margins */
+}
+
+.post-options {
+    margin-left: auto; /* Ensures the options button is on the far right */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.post-media {
+    max-width: 80%; /* Ensures the image does not exceed the container width */
+    height: auto; /* Maintains the aspect ratio */
+    object-fit: contain; /* Ensures the entire image is visible without being cropped */
+    border-radius: 8px;
+    margin-top: 5rem;
+    display: block; /* Ensures the image behaves predictably in block layout */
+    margin-left: auto; /* Centers the image horizontally */
+    margin-right: auto; /* Centers the image horizontally */
+    margin-bottom: 5rem;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #555;
+}
+
+.action-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.comment-box {
+    margin-top: 1rem;
+}
+
+.comment-box textarea {
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.comment-box button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}

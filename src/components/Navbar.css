@@ -1,0 +1,79 @@
+/* Sidebar container */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #000; /* Black background */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Brand/logo at the top */
+.sidebar-brand {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.sidebar-logo {
+    text-decoration: none;
+    color: white;
+}
+
+/* Navigation links */
+.sidebar-nav {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 10px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 10px;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Active link */
+.sidebar-item.active .sidebar-link {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+/* Icon styles */
+.icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+/* Badge styles */
+.badge {
+    background-color: white;
+    color: black;
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-align: center;
+}
