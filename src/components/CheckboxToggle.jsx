@@ -7,7 +7,7 @@ const CheckboxToggle = ({ checked, onChange }) => {
         const newValue = !isChecked;
         setIsChecked(newValue);
         if (onChange) {
-            onChange(newValue); // Notify parent component of the new state
+            onChange(newValue);
         }
     };
 
@@ -20,7 +20,6 @@ const CheckboxToggle = ({ checked, onChange }) => {
             aria-checked={isChecked}
         >
             {isChecked ? (
-                // Solid checkbox SVG
                 <svg
                     width="24px"
                     height="24px"

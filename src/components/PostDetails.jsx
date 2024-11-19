@@ -13,17 +13,18 @@ const PostDetails = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [likes, setLikes] = useState(0);
 
-    // Fetch post details, user info, comments, and likes
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedTitle, setEditedTitle] = useState("");
+    const [editedContent, setEditedContent] = useState("");
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch current user
                 const { data: userData } = await supabase.auth.getUser();
                 if (userData) {
                     setUserId(userData.user?.id);
                 }
 
-                // Fetch post details
                 const { data: postData, error: postError } = await supabase
                     .from("Post")
                     .select("*, Users(username, profile_pic), Media(media_url)")
@@ -36,7 +37,9 @@ const PostDetails = () => {
                 setUsername(postData.Users?.username || "Unknown User");
                 setProfilePic(postData.Users?.profile_pic || "https://via.placeholder.com/40");
 
-                // Fetch comments
+                setEditedTitle(postData.title);
+                setEditedContent(postData.content);
+
                 const { data: commentsData, error: commentsError } = await supabase
                     .from("Comments")
                     .select("*, Users(username, profile_pic)")
@@ -47,7 +50,6 @@ const PostDetails = () => {
 
                 setComments(commentsData || []);
 
-                // Fetch likes count
                 const { count: likeCount, error: likesError } = await supabase
                     .from("Likes")
                     .select("*", { count: "exact" })
@@ -62,15 +64,15 @@ const PostDetails = () => {
         };
 
         fetchData();
+    }, [postId]);
 
-        // Real-time comments subscription
-        const subscription = supabase
+    useEffect(() => {
+        const commentSubscription = supabase
             .channel("realtime-comments")
             .on(
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "Comments" },
                 async (payload) => {
-                    // Fetch username and profile_pic for the new comment
                     const { data: user, error } = await supabase
                         .from("Users")
                         .select("username, profile_pic")
@@ -93,11 +95,71 @@ const PostDetails = () => {
             .subscribe();
 
         return () => {
-            supabase.removeChannel(subscription);
+            supabase.removeChannel(commentSubscription);
         };
     }, [postId]);
 
-    // Handle adding comments
+    useEffect(() => {
+        const postSubscription = supabase
+            .channel("realtime-posts")
+            .on(
+                "postgres_changes",
+                { event: "UPDATE", schema: "public", table: "Post", filter: `id=eq.${postId}` },
+                async (payload) => {
+                    setPost((prevPost) => ({
+                        ...prevPost,
+                        title: payload.new.title,
+                        content: payload.new.content,
+                    }));
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(postSubscription);
+        };
+    }, [postId]);
+
+    const handleEdit = async (e) => {
+        e.stopPropagation();
+
+        try {
+            const { error } = await supabase
+                .from("Post")
+                .update({ title: editedTitle, content: editedContent })
+                .eq("id", postId);
+
+            if (error) throw error;
+
+            alert("Post updated successfully!");
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Error updating post:", error);
+            alert("Failed to update the post.");
+        }
+    };
+
+    const handleDelete = async (e) => {
+        e.stopPropagation();
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+
+        try {
+            const { error } = await supabase
+                .from("Post")
+                .delete()
+                .eq("id", postId);
+
+            if (error) throw error;
+
+            alert("Post deleted successfully!");
+            window.location.reload();
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            alert("Failed to delete the post.");
+        }
+    };
+
     const handleAddComment = async () => {
         if (!newComment.trim()) return;
 
@@ -116,7 +178,6 @@ const PostDetails = () => {
             return;
         }
 
-        // Clear the input field
         setNewComment("");
     };
 
@@ -126,7 +187,6 @@ const PostDetails = () => {
 
     return (
         <div className="post-details-container">
-            {/* Post Header */}
             <div className="post-header">
                 <img src={profilePic} alt="Profile" className="profile-pic" />
                 <div className="username-time-container">
@@ -135,22 +195,61 @@ const PostDetails = () => {
                 </div>
             </div>
 
-            {/* Post Content */}
             <div className="post-content">
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
-                {post.Media?.media_url && (
-                    <img src={post.Media.media_url} alt="Post media" className="post-media" />
+                {isEditing ? (
+                    <>
+                        <input
+                            type="text"
+                            value={editedTitle}
+                            onChange={(e) => setEditedTitle(e.target.value)}
+                            placeholder="Edit title"
+                            className="edit-input"
+                        />
+                        <textarea
+                            value={editedContent}
+                            onChange={(e) => setEditedContent(e.target.value)}
+                            placeholder="Edit content"
+                            className="edit-textarea"
+                        />
+                        <button onClick={handleEdit} className="save-button">
+                            Save
+                        </button>
+                        <button
+                            onClick={() => setIsEditing(false)}
+                            className="cancel-button"
+                        >
+                            Cancel
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <h3>{post.title}</h3>
+                        <p>{post.content}</p>
+                        {post.Media?.media_url && (
+                            <img src={post.Media.media_url} alt="Post media" className="post-media" />
+                        )}
+                    </>
                 )}
             </div>
 
-            {/* Likes and Comments Header */}
+            <div className="post-actions">
+                {!isEditing && (
+                    <>
+                        <button onClick={() => setIsEditing(true)} className="edit-button">
+                            Edit
+                        </button>
+                        <button onClick={handleDelete} className="delete-button">
+                            Delete
+                        </button>
+                    </>
+                )}
+            </div>
+
             <div className="likes-comments-header">
                 <p>{likes} likes</p>
                 <h4>Comments</h4>
             </div>
 
-            {/* Comments Section */}
             <div className="comments-section">
                 {comments.map((comment) => (
                     <div key={comment.id} className="comment">
@@ -166,7 +265,6 @@ const PostDetails = () => {
                     </div>
                 ))}
 
-                {/* Add Comment */}
                 <div className="add-comment">
                     <textarea
                         value={newComment}

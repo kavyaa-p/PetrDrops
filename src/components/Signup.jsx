@@ -15,7 +15,6 @@ const Signup = () => {
         e.preventDefault();
         setLoading(true);
 
-        // Step 1: Sign up the user
         const { data: signupData, error } = await supabase.auth.signUp({
             email,
             password,
@@ -36,11 +35,11 @@ const Signup = () => {
                 .from("Users")
                 .insert([
                     {
-                        id: user.id, // Use the auto-generated user ID from Supabase Auth
+                        id: user.id,
                         username,
                         email,
                         profile_pic: profilePic || null,
-                        password, // This is just an example, avoid saving plaintext passwords in production
+                        password,
                     },
                 ]);
 
@@ -49,7 +48,7 @@ const Signup = () => {
                 alert("Error saving user profile. Please contact support.");
             } else {
                 alert("Signup successful! Please verify your email before logging in.");
-                navigate("/login"); // Redirect to login page
+                navigate("/login");
             }
         }
 

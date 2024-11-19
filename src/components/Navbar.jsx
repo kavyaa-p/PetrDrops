@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 import "./Navbar.css";
 
 const Navbar = () => {
-    const navigate = useNavigate(); // Import and use navigate here
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
@@ -13,10 +13,9 @@ const Navbar = () => {
     
             alert("You have been logged out successfully.");
             
-            // Add a slight delay to ensure state updates propagate
             setTimeout(() => {
-                navigate("/login"); // Redirect to the login page
-            }, 100); // Adjust the delay as needed
+                navigate("/login");
+            }, 100);
         } catch (error) {
             console.error("Error during logout:", error);
             alert("Failed to logout. Please try again.");

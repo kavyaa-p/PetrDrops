@@ -16,42 +16,42 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    margin-right: 0.5rem; /* Adds space between picture and username */
+    margin-right: 0.5rem;
 }
 
 .username-time-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Aligns text to the left */
+    align-items: flex-start;
 }
 
 .username {
     font-weight: bold;
-    margin: 0; /* Removes default margins */
+    margin: 0;
 }
 
 .post-time {
     font-size: 0.85rem;
     color: #888;
-    margin: 0; /* Removes default margins */
+    margin: 0;
 }
 
 .post-options {
-    margin-left: auto; /* Ensures the options button is on the far right */
+    margin-left: auto;
     background: none;
     border: none;
     cursor: pointer;
 }
 
 .post-media {
-    max-width: 80%; /* Ensures the image does not exceed the container width */
-    height: auto; /* Maintains the aspect ratio */
-    object-fit: contain; /* Ensures the entire image is visible without being cropped */
+    max-width: 80%;
+    height: auto;
+    object-fit: contain;
     border-radius: 8px;
     margin-top: 5rem;
-    display: block; /* Ensures the image behaves predictably in block layout */
-    margin-left: auto; /* Centers the image horizontally */
-    margin-right: auto; /* Centers the image horizontally */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 5rem;
 }
 

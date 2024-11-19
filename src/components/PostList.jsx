@@ -6,14 +6,13 @@ import "./PostList.css";
 const PostList = () => {
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortOption, setSortOption] = useState("created_at"); // Default sort by created_at
+    const [sortOption, setSortOption] = useState("created_at");
     const [loading, setLoading] = useState(true);
 
     const fetchPosts = async () => {
         setLoading(true);
 
         try {
-            // Construct the query
             const { data: postsData, error: postsError } = await supabase
                 .from("Post")
                 .select(`
@@ -21,12 +20,11 @@ const PostList = () => {
                     (SELECT COUNT(*) FROM Likes WHERE Likes.post_id = Post.id) AS likes
                 `)
                 .order(sortOption === "likes" ? "likes" : "created_at", {
-                    ascending: sortOption === "created_at", // Ascending for created_at, descending for likes
+                    ascending: sortOption === "created_at",
                 });
 
             if (postsError) throw postsError;
 
-            // Filter posts by search term
             const filteredPosts = postsData.filter((post) =>
                 searchTerm ? post.title.toLowerCase().includes(searchTerm.toLowerCase()) : true
             );
@@ -45,7 +43,6 @@ const PostList = () => {
 
     return (
         <div className="post-list-container">
-            {/* Search and Sort Controls */}
             <div className="post-list-controls">
                 <input
                     type="text"

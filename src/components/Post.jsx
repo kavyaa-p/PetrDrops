@@ -4,22 +4,17 @@ import { useNavigate } from "react-router-dom";
 import "./Post.css";
 
 const Post = ({ postData }) => {
-    const [likes, setLikes] = useState(0); // Start with 0, fetch real count later
+    const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedTitle, setEditedTitle] = useState(postData.title);
-    const [editedContent, setEditedContent] = useState(postData.content);
-    const [username, setUsername] = useState("Unknown User"); // Username state
-    const [profilePic, setProfilePic] = useState(null); // Profile picture state
-    const [mediaUrl, setMediaUrl] = useState(null); // Media URL state
-    const [mediaType, setMediaType] = useState(null); // Media type state
+    const [username, setUsername] = useState("Unknown User");
+    const [profilePic, setProfilePic] = useState(null);
+    const [mediaUrl, setMediaUrl] = useState(null);
+    const [mediaType, setMediaType] = useState(null);
 
-    const navigate = useNavigate(); // For navigation
+    const navigate = useNavigate();
 
-    // Fetch user and media details
     const fetchPostDetails = async () => {
         try {
-            // Fetch user details
             const { data: userData, error: userError } = await supabase
                 .from("Users")
                 .select("username, profile_pic")
@@ -31,7 +26,6 @@ const Post = ({ postData }) => {
             setUsername(userData?.username || "Unknown User");
             setProfilePic(userData?.profile_pic || "https://via.placeholder.com/40");
 
-            // Fetch media details if media_id is present
             if (postData.media_id) {
                 const { data: mediaData, error: mediaError } = await supabase
                     .from("Media")
@@ -49,7 +43,6 @@ const Post = ({ postData }) => {
         }
     };
 
-    // Fetch likes count dynamically
     const fetchLikes = async () => {
         try {
             const { count, error } = await supabase
@@ -67,15 +60,14 @@ const Post = ({ postData }) => {
 
     useEffect(() => {
         fetchLikes();
-        fetchPostDetails(); // Fetch user and media details
-    }, [postData.id, postData.user_id, postData.media_id]); // Re-run when post ID, user ID, or media ID changes
+        fetchPostDetails();
+    }, [postData.id, postData.user_id, postData.media_id]);
 
-    // Handle like action
     const handleLike = async (e) => {
-        e.stopPropagation(); // Prevent navigation when liking
+        e.stopPropagation();
 
-        if (liked) return; // Prevent multiple likes
-        setLiked(true); // Optimistic UI update
+        if (liked) return;
+        setLiked(true);
 
         try {
             const { error } = await supabase
@@ -84,59 +76,18 @@ const Post = ({ postData }) => {
 
             if (error) throw error;
 
-            // Fetch updated likes count from the backend
             fetchLikes();
         } catch (error) {
             console.error("Error liking the post:", error);
             alert("Failed to like the post.");
-            setLiked(false); // Rollback if error
+            setLiked(false);
         }
     };
 
-    // Handle post edit
-    const handleEdit = async (e) => {
-        e.stopPropagation(); // Prevent navigation
-
-        try {
-            const { error } = await supabase
-                .from("Post")
-                .update({ title: editedTitle, content: editedContent })
-                .eq("id", postData.id);
-
-            if (error) throw error;
-
-            alert("Post updated successfully!");
-            setIsEditing(false);
-        } catch (error) {
-            console.error("Error updating post:", error);
-            alert("Failed to update the post.");
+    const handlePostClick = (e) => {
+        if (e.target.closest(".like-button")) {
+            return;
         }
-    };
-
-    // Handle post delete
-    const handleDelete = async (e) => {
-        e.stopPropagation(); // Prevent navigation
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        if (!confirmDelete) return;
-
-        try {
-            const { error } = await supabase
-                .from("Post")
-                .delete()
-                .eq("id", postData.id);
-
-            if (error) throw error;
-
-            alert("Post deleted successfully!");
-            window.location.reload();
-        } catch (error) {
-            console.error("Error deleting post:", error);
-            alert("Failed to delete the post.");
-        }
-    };
-
-    // Redirect to detailed post page
-    const handlePostClick = () => {
         navigate(`/post/${postData.id}`);
     };
 
@@ -151,61 +102,23 @@ const Post = ({ postData }) => {
             </div>
 
             <div className="post-content">
-                {isEditing ? (
-                    <>
-                        <input
-                            type="text"
-                            value={editedTitle}
-                            onChange={(e) => {
-                                e.stopPropagation();
-                                setEditedTitle(e.target.value);
-                            }}
-                            placeholder="Edit title"
-                            className="edit-input"
-                        />
-                        <textarea
-                            value={editedContent}
-                            onChange={(e) => {
-                                e.stopPropagation();
-                                setEditedContent(e.target.value);
-                            }}
-                            placeholder="Edit content"
-                            className="edit-textarea"
-                        />
-                        <button onClick={handleEdit} className="save-button">
-                            Save
-                        </button>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsEditing(false);
-                            }}
-                            className="cancel-button"
-                        >
-                            Cancel
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <h3>{postData.title}</h3>
-                        <p>{postData.content}</p>
-                        {mediaUrl && (
-                            mediaType?.startsWith("image/") ? (
-                                <img src={mediaUrl} alt="Post media" className="post-media" />
-                            ) : mediaType?.startsWith("video/") ? (
-                                <video src={mediaUrl} controls className="post-media"></video>
-                            ) : (
-                                <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
-                                    View Attachment
-                                </a>
-                            )
-                        )}
-                    </>
+                <h3>{postData.title}</h3>
+                <p>{postData.content}</p>
+                {mediaUrl && (
+                    mediaType?.startsWith("image/") ? (
+                        <img src={mediaUrl} alt="Post media" className="post-media" />
+                    ) : mediaType?.startsWith("video/") ? (
+                        <video src={mediaUrl} controls className="post-media"></video>
+                    ) : (
+                        <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
+                            View Attachment
+                        </a>
+                    )
                 )}
             </div>
 
             <div className="post-actions">
-                <div className="action-button" onClick={handleLike}>
+                <div className="action-button like-button" onClick={handleLike}>
                     {liked ? (
                         <svg
                             width="24"
@@ -226,7 +139,6 @@ const Post = ({ postData }) => {
                             width="24"
                             height="24"
                             viewBox="0 0 24 24"
-                            border="black"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                         >
@@ -239,14 +151,6 @@ const Post = ({ postData }) => {
                     )}
                     <span>{likes}</span>
                 </div>
-
-                <button className="edit-button" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}>
-                    Edit
-                </button>
-
-                <button className="delete-button" onClick={handleDelete}>
-                    Delete
-                </button>
             </div>
         </div>
     );

@@ -1,14 +1,9 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
   padding: 2rem;
-  text-align: center;
 }
 
-.product-image {
-  height: 300px;
-}
-
-.image-credits {
-  font-size: 12px;
+.App {
+  flex: 1;
 }

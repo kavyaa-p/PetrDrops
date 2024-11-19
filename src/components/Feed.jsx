@@ -7,24 +7,20 @@ import "./Feed.css";
 function Feed() {
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("created_at"); // Default sort by created_at
+  const [sortOption, setSortOption] = useState("created_at");
 
-  // Fetch posts with likes count and search functionality
   const fetchPosts = async () => {
     try {
-      // Fetch all posts
       const { data: postsData, error: postsError } = await supabase
         .from("Post")
         .select("*");
 
       if (postsError) throw postsError;
 
-      // Filter posts by search term
       const filteredPosts = postsData.filter((post) =>
         searchTerm ? post.title.toLowerCase().includes(searchTerm.toLowerCase()) : true
       );
 
-      // Fetch likes count for each post
       const postsWithLikes = await Promise.all(
         filteredPosts.map(async (post) => {
           const { count: likeCount, error: likesError } = await supabase
@@ -37,15 +33,14 @@ function Feed() {
             return { ...post, likes: 0 };
           }
 
-          return { ...post, likes: likeCount || 0 }; // Attach likes count to each post
+          return { ...post, likes: likeCount || 0 };
         })
       );
 
-      // Sort posts based on the selected option
       const sortedPosts =
         sortOption === "likes"
-          ? postsWithLikes.sort((a, b) => b.likes - a.likes) // Sort by likes (descending)
-          : postsWithLikes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by created_at (descending)
+          ? postsWithLikes.sort((a, b) => b.likes - a.likes)
+          : postsWithLikes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
       setPosts(sortedPosts);
     } catch (error) {
@@ -53,12 +48,10 @@ function Feed() {
     }
   };
 
-  // Fetch posts on initial render and whenever search term or sort option changes
   useEffect(() => {
     fetchPosts();
   }, [searchTerm, sortOption]);
 
-  // Real-time subscription
   useEffect(() => {
     const subscription = supabase
       .channel("realtime-posts")
@@ -107,7 +100,6 @@ function Feed() {
     <div className="container mt-5">
       <h1>Feed</h1>
 
-      {/* Search and Sort Controls */}
       <div className="mt-4 mb-4">
         <input
           type="text"
@@ -131,7 +123,6 @@ function Feed() {
         <NewPost />
       </div>
 
-      {/* Post List */}
       <div className="mt-5">
         {posts.length > 0 ? (
           posts.map((post) => <Post key={post.id} postData={post} />)

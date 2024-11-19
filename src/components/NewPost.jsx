@@ -11,7 +11,6 @@ const NewPost = () => {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState(null);
 
-    // Fetch the current user ID on mount
     useEffect(() => {
         const fetchUser = async () => {
             const { data, error } = await supabase.auth.getUser();
@@ -28,16 +27,14 @@ const NewPost = () => {
             return;
         }
 
-        // Sanitize the file name
         const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
-        const fileName = `${Date.now()}-${sanitizedFileName}`; // Ensure unique file name
+        const fileName = `${Date.now()}-${sanitizedFileName}`;
 
         try {
             console.log("Uploading file to bucket...");
 
-            // Upload file to Supabase storage
             const { data: uploadData, error: uploadError } = await supabase.storage
-                .from("media-uploads") // Ensure this matches your bucket name
+                .from("media-uploads")
                 .upload(fileName, file);
 
             if (uploadError) {
@@ -48,13 +45,11 @@ const NewPost = () => {
 
             console.log("Upload successful:", uploadData);
 
-            // Use the full file path from the upload response
             const fullPath = uploadData.path;
 
-            // Generate public URL for the uploaded media
             const { data: publicUrlData, error: publicUrlError } = supabase.storage
                 .from("media-uploads")
-                .getPublicUrl(fullPath); // Use the correct path
+                .getPublicUrl(fullPath);
 
             if (publicUrlError || !publicUrlData?.publicUrl) {
                 console.error("Error generating public URL:", publicUrlError);
@@ -64,11 +59,10 @@ const NewPost = () => {
 
             console.log("Public URL generated:", publicUrlData.publicUrl);
 
-            // Store media information in state
             setMedia({
-                path: fullPath, // Path in storage
-                url: publicUrlData.publicUrl, // Public URL for the file
-                type: file.type, // MIME type of the file
+                path: fullPath,
+                url: publicUrlData.publicUrl,
+                type: file.type,
             });
         } catch (error) {
             console.error("Unexpected error during media upload:", error);
@@ -102,8 +96,8 @@ const NewPost = () => {
                 .from("Media")
                 .insert([
                     {
-                        media_url: media.url, // Use the public URL
-                        media_type: media.type, // Use the explicit type saved in state
+                        media_url: media.url,
+                        media_type: media.type,
                     },
                 ])
                 .select();
@@ -117,15 +111,14 @@ const NewPost = () => {
         }
 
         try {
-            // Insert post record into the Post table
             const { data: postData, error: postError } = await supabase
                 .from("Post")
                 .insert([
                     {
-                        user_id: userId, // Pass the logged-in user's ID
+                        user_id: userId,
                         title,
                         content,
-                        media_id: mediaId, // Attach the media ID to the post
+                        media_id: mediaId,
                         is_petr_drop: flag === "PetrDrop",
                     },
                 ])
@@ -148,7 +141,6 @@ const NewPost = () => {
 
     return (
         <div className="new-post-container">
-            {/* Title Input */}
             <div className="new-post-input">
                 <input
                     type="text"
@@ -160,7 +152,6 @@ const NewPost = () => {
                 />
             </div>
 
-            {/* Content Input */}
             <div className="new-post-input">
                 <input
                     type="text"
@@ -171,12 +162,9 @@ const NewPost = () => {
                 />
             </div>
 
-            {/* Action Buttons */}
             <div className="new-post-actions">
-                {/* Left Actions */}
                 <div className="left-actions">
                     <div className="left-actions">
-                        {/* Media Button */}
                         <label className="action-icon">
                             <input type="file" accept="*" hidden onChange={handleMediaChange} />
                             <svg
@@ -225,9 +213,7 @@ const NewPost = () => {
 
                 </div>
 
-                {/* Right Actions */}
                 <div className="right-actions">
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         className="send-button"

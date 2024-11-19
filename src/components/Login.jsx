@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
-import "./Auth.css"; // Optional CSS file for styling
+import "./Auth.css";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ const Login = () => {
             alert("Login failed! Please check your email and password.");
         } else {
             alert("Login successful!");
-            navigate("/"); // Redirect to the home/feed page
+            navigate("/");
         }
         setLoading(false);
     };
@@ -33,7 +33,7 @@ const Login = () => {
         const checkUser = async () => {
             const { data } = await supabase.auth.getUser();
             if (data?.user) {
-                navigate("/"); // Redirect to Feed if already logged in
+                navigate("/");
             }
         };
 
